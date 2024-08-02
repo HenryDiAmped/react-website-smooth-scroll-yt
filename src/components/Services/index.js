@@ -1,9 +1,6 @@
-import React from 'react'
-import Icon1 from '../../images/svg-5.svg';
-import Icon2 from '../../images/svg-6.svg';
-import Icon3 from '../../images/svg-7.svg';
-import Icon4 from '../../images/svg-8.svg';
-import {
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { 
     ServicesContainer,
     ServicesH1,
     ServicesWrapper,
@@ -11,36 +8,35 @@ import {
     ServicesIcon,
     ServicesH2,
     ServicesP,
-} from './ServicesElements';
+ } from './ServicesElements';
 
 const Services = () => {
-    return (
-        <ServicesContainer id="services" >
-            <ServicesH1>Our Services</ServicesH1>
-            <ServicesWrapper>
-                <ServicesCard>
-                    <ServicesIcon src={Icon1} />
-                    <ServicesH2>Reduce expenses</ServicesH2>
-                    <ServicesP>We help reduce your fess and encrease your overall revenue.</ServicesP>
-                </ServicesCard>
-                <ServicesCard>
-                    <ServicesIcon src={Icon2} />
-                    <ServicesH2>Virtual Offices</ServicesH2>
-                    <ServicesP>You can access our platform online anuwhere in the world.</ServicesP>
-                </ServicesCard>
-                <ServicesCard>
-                    <ServicesIcon src={Icon3} />
-                    <ServicesH2>Premium Benefits</ServicesH2>
-                    <ServicesP>Unlock our special membership card that returns 5% cash back.</ServicesP>
-                </ServicesCard>
-                <ServicesCard>
-                    <ServicesIcon src={Icon4} />
-                    <ServicesH2>Financial advice</ServicesH2>
-                    <ServicesP>We offer personalized advice to help you manage your finances efficiently.</ServicesP>
-                </ServicesCard>
-            </ServicesWrapper>
-        </ServicesContainer>
-    )
+  const [servicios, setServicios] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/servicios')
+      .then(response => {
+        setServicios(response.data);
+      })
+      .catch(error => {
+        console.error("Hubo un error al obtener los datos: ", error);
+      });
+  }, []);
+
+  return (
+    <ServicesContainer id="services">
+        <ServicesH1>Our Services</ServicesH1>
+        <ServicesWrapper>
+          {servicios.map(servicio => (
+            <ServicesCard key={servicio._id}>
+                <ServicesIcon src={require(`../../${servicio.image}`)} />{/* Puedes mapear las imágenes con los datos obtenidos si están disponibles */}
+                <ServicesH2>{servicio.name}</ServicesH2>
+                <ServicesP>{servicio.description}</ServicesP>
+            </ServicesCard>
+          ))}
+        </ServicesWrapper>
+    </ServicesContainer>
+  )
 }
 
-export default Services
+export default Services;
